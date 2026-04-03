@@ -1,0 +1,17 @@
+{
+    "name": "quanlythuphi/backend",
+    "description": "Student Fee Management Backend",
+    "type": "project",
+    "require": {
+        "php": ">=8.2",
+        "ext-pdo_mysql": "*",
+        "ext-mbstring": "*",
+        "ext-gd": "*",
+        "ext-fileinfo": "*",
+        "ext-zip": "*"
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "allow-plugins": true
+    }
+}
