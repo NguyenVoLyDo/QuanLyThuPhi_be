@@ -1,0 +1,18 @@
+# Uploads - GIỮ LẠI ảnh (QR code, proofs) để FE truy cập được
+# uploads/*               <-- đã bỏ dòng này
+
+# Chỉ ignore file tạm nếu có
+uploads/tmp/
+uploads/*.tmp
+
+# Environment files
+.env
+.env.local
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
