@@ -79,10 +79,12 @@ class TeacherController
     public function create()
     {
         check_permission(['Admin']);
-        if (defined('API_MODE')) {
-            json_response(['success' => true, 'data' => []]);
-        }
         $classes = $this->classModel->getAll();
+        
+        if (defined('API_MODE')) {
+            json_response(['success' => true, 'data' => ['classes' => $classes]]);
+        }
+        
         require_once __DIR__ . '/../../frontend/views/teachers/create.php';
     }
 
@@ -141,6 +143,17 @@ class TeacherController
 
         $classes = $this->classModel->getAll();
         $assigned_classes = $this->classModel->getClassIdsByTeacher($id);
+
+        if (defined('API_MODE')) {
+            json_response([
+                'success' => true, 
+                'data' => [
+                    'teacher' => $teacher, 
+                    'classes' => $classes, 
+                    'assigned_classes' => $assigned_classes
+                ]
+            ]);
+        }
 
         require_once __DIR__ . '/../../frontend/views/teachers/edit.php';
     }

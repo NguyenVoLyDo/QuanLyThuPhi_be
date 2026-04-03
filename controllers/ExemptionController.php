@@ -70,6 +70,9 @@ class ExemptionController
     public function create()
     {
         check_permission(['Accountant']);
+        if (defined('API_MODE')) {
+            json_response(['success' => true, 'data' => []]);
+        }
         require_once __DIR__ . '/../../frontend/views/exemptions/create.php';
     }
 
@@ -86,6 +89,10 @@ class ExemptionController
             set_flash('error', 'Không tìm thấy chính sách!');
             header('Location: index.php?controller=exemption&action=index');
             exit;
+        }
+
+        if (defined('API_MODE')) {
+            json_response(['success' => true, 'data' => ['exemption' => $exemption]]);
         }
         require_once __DIR__ . '/../../frontend/views/exemptions/edit.php';
     }

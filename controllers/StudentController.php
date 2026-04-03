@@ -147,6 +147,8 @@ class StudentController
     }
 
     /**
+     * Hiển thị form thêm học sinh
+     */
     public function create()
     {
         check_permission(['Admin', 'Accountant', 'Teacher']);
@@ -213,6 +215,8 @@ class StudentController
     }
 
     /**
+     * Hiển thị form sửa học sinh
+     */
     public function edit()
     {
         check_permission(['Admin', 'Accountant', 'Teacher']);
