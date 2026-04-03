@@ -16,11 +16,23 @@ class Database
 
     public function __construct()
     {
-        $this->host     = getenv('MYSQLHOST')     ?: 'localhost';
-        $this->db_name  = getenv('MYSQLDATABASE') ?: 'student_fee_management';
-        $this->username = getenv('MYSQLUSER')     ?: 'root';
-        $this->password = getenv('MYSQLPASSWORD') ?: '';
-        $this->port     = getenv('MYSQLPORT')     ?: '3306';
+        // Thử đọc từ MYSQL_URL (chuỗi kết nối gộp của Railway)
+        $url = getenv('MYSQL_URL');
+        if ($url) {
+            $dbvars = parse_url($url);
+            $this->host     = $dbvars['host'] ?? 'localhost';
+            $this->db_name  = ltrim($dbvars['path'], '/') ?: 'railway';
+            $this->username = $dbvars['user'] ?? 'root';
+            $this->password = $dbvars['pass'] ?? '';
+            $this->port     = $dbvars['port'] ?? '3306';
+        } else {
+            // Fallback nếu không có MYSQL_URL
+            $this->host     = getenv('MYSQLHOST')     ?: 'localhost';
+            $this->db_name  = getenv('MYSQLDATABASE') ?: 'student_fee_management';
+            $this->username = getenv('MYSQLUSER')     ?: 'root';
+            $this->password = getenv('MYSQLPASSWORD') ?: '';
+            $this->port     = getenv('MYSQLPORT')     ?: '3306';
+        }
     }
 
     public $conn;
