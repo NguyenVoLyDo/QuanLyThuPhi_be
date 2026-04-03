@@ -133,8 +133,20 @@ class AuthController
             $viewer = ['role' => 'Teacher', 'class_id' => $class_ids];
             $stats['total_payments'] = $paymentModel->countAll($filters, $viewer);
         } else if ($_SESSION['role_name'] === 'Student' && isset($_SESSION['student_id'])) {
-            // Student specific stats if needed
-            $stats = [];
+            $student_id = $_SESSION['student_id'];
+            $debts = $studentModel->getDebts($student_id);
+            $total_debt = 0;
+            $unpaid_count = 0;
+            foreach ($debts as $debt) {
+                if ($debt['status'] != 'Paid') {
+                    $total_debt += ($debt['total_amount'] - $debt['paid_amount']);
+                    $unpaid_count++;
+                }
+            }
+            $stats = [
+                'total_debt' => $total_debt,
+                'unpaid_count' => $unpaid_count
+            ];
         }
 
         if (defined('API_MODE')) {

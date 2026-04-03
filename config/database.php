@@ -1,8 +1,13 @@
 <?php
 /**
  * Database Configuration - PDO Connection
- * Cấu hình kết nối cơ sở dữ liệu với PDO
  */
+
+// Disable direct error output to avoid corrupting JSON in API mode
+error_reporting(E_ALL);
+ini_set('display_errors', '0');
+ini_set('log_errors', '1');
+// error_log path is typically handled by server config, but ensures no echo occurs.
 
 class Database
 {
@@ -198,6 +203,11 @@ function json_response($data, $status = 200)
     if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
         http_response_code(200);
         exit();
+    }
+
+    // Clean any buffer (whitespace, warnings) that might have leaked
+    if (ob_get_level()) {
+        ob_end_clean();
     }
 
     http_response_code($status);

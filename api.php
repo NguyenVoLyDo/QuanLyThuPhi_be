@@ -1,4 +1,5 @@
 <?php
+ob_start();
 /**
  * Dynamic API Gateway
  */
@@ -44,7 +45,6 @@ try {
 } catch (Exception $e) {
     json_response([
         'success' => false,
-        'message' => 'Server Error: ' . $e->getMessage(),
-        'trace' => $e->getTraceAsString()
+        'message' => 'Server Error: ' . $e->getMessage()
     ], 500);
 }
