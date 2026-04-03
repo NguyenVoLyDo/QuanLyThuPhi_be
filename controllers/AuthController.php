@@ -27,6 +27,9 @@ class AuthController
     {
         // chuyển vào dashboard
         if (isset($_SESSION['user_id'])) {
+            if (defined('API_MODE')) {
+                json_response(['success' => true, 'redirect' => 'index.php?action=dashboard']);
+            }
             header("Location: index.php?action=dashboard");
             exit;
         }
@@ -100,6 +103,9 @@ class AuthController
     {
         // Kiểm tra đăng nhập
         if (!isset($_SESSION['user_id'])) {
+            if (defined('API_MODE')) {
+                json_response(['success' => false, 'message' => 'Login required', 'code' => 401], 401);
+            }
             header("Location: index.php?action=login");
             exit;
         }
