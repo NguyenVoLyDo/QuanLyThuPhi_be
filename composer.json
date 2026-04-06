@@ -5,6 +5,7 @@
     "require": {
         "php": ">=8.2",
         "ext-pdo_mysql": "*",
+        "ext-pdo_pgsql": "*",
         "ext-mbstring": "*",
         "ext-gd": "*",
         "ext-fileinfo": "*",
