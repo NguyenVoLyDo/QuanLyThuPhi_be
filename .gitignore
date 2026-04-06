@@ -1,9 +1,12 @@
-# Uploads - GIỮ LẠI ảnh (QR code, proofs) để FE truy cập được
-# uploads/*               <-- đã bỏ dòng này
+# Uploads - GIỮ LẠI ảnh
+# uploads/*
 
 # Chỉ ignore file tạm nếu có
 uploads/tmp/
 uploads/*.tmp
+
+# SQL files
+*.sql
 
 # Environment files
 .env

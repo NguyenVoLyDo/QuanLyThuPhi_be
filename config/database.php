@@ -11,32 +11,56 @@ ini_set('log_errors', '1');
 
 class Database
 {
-    // Thông tin kết nối - đọc từ biến môi trường (Railway) hoặc fallback local
+    // Thông tin kết nối - tự động nhận diện MySQL hoặc PostgreSQL (Railway/Render)
     private $host;
     private $db_name;
     private $username;
     private $password;
     private $port;
-    private $charset = 'utf8mb4';
+    private $driver; // 'mysql' hoặc 'pgsql'
+    private $charset = 'utf8'; // pgsql dùng 'utf8', mysql dùng 'utf8mb4'
 
     public function __construct()
     {
-        // Thử đọc từ MYSQL_URL (chuỗi kết nối gộp của Railway)
-        $url = getenv('MYSQL_URL');
-        if ($url) {
-            $dbvars = parse_url($url);
+        // 1. Thử PostgreSQL (DATABASE_URL hoặc PGHOST)
+        $pg_url = getenv('DATABASE_URL');
+        if ($pg_url && strpos($pg_url, 'postgres') !== false) {
+            $this->driver = 'pgsql';
+            $dbvars = parse_url($pg_url);
             $this->host     = $dbvars['host'] ?? 'localhost';
             $this->db_name  = ltrim($dbvars['path'], '/') ?: 'railway';
-            $this->username = $dbvars['user'] ?? 'root';
+            $this->username = $dbvars['user'] ?? 'postgres';
             $this->password = $dbvars['pass'] ?? '';
-            $this->port     = $dbvars['port'] ?? '3306';
-        } else {
-            // Fallback nếu không có MYSQL_URL
-            $this->host     = getenv('MYSQLHOST')     ?: 'localhost';
-            $this->db_name  = getenv('MYSQLDATABASE') ?: 'student_fee_management';
-            $this->username = getenv('MYSQLUSER')     ?: 'root';
-            $this->password = getenv('MYSQLPASSWORD') ?: '';
-            $this->port     = getenv('MYSQLPORT')     ?: '3306';
+            $this->port     = $dbvars['port'] ?? '5432';
+            $this->charset  = 'utf8';
+        } elseif (getenv('PGHOST')) {
+            $this->driver   = 'pgsql';
+            $this->host     = getenv('PGHOST');
+            $this->db_name  = getenv('PGDATABASE');
+            $this->username = getenv('PGUSER');
+            $this->password = getenv('PGPASSWORD');
+            $this->port     = getenv('PGPORT') ?: '5432';
+            $this->charset  = 'utf8';
+        } 
+        // 2. Thử MySQL (MYSQL_URL hoặc MYSQLHOST)
+        else {
+            $this->driver = 'mysql';
+            $this->charset = 'utf8mb4';
+            $mysql_url = getenv('MYSQL_URL');
+            if ($mysql_url) {
+                $dbvars = parse_url($mysql_url);
+                $this->host     = $dbvars['host'] ?? 'localhost';
+                $this->db_name  = ltrim($dbvars['path'], '/') ?: 'railway';
+                $this->username = $dbvars['user'] ?? 'root';
+                $this->password = $dbvars['pass'] ?? '';
+                $this->port     = $dbvars['port'] ?? '3306';
+            } else {
+                $this->host     = getenv('MYSQLHOST')     ?: 'localhost';
+                $this->db_name  = getenv('MYSQLDATABASE') ?: 'student_fee_management';
+                $this->username = getenv('MYSQLUSER')     ?: 'root';
+                $this->password = getenv('MYSQLPASSWORD') ?: '';
+                $this->port     = getenv('MYSQLPORT')     ?: '3306';
+            }
         }
     }
 
@@ -51,19 +75,26 @@ class Database
         $this->conn = null;
 
         try {
-            $dsn = "mysql:host={$this->host};port={$this->port};dbname={$this->db_name};charset={$this->charset}";
+            if ($this->driver === 'pgsql') {
+                $dsn = "pgsql:host={$this->host};port={$this->port};dbname={$this->db_name};options='--client_encoding=UTF8'";
+            } else {
+                $dsn = "mysql:host={$this->host};port={$this->port};dbname={$this->db_name};charset={$this->charset}";
+            }
 
             $options = [
                 PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
                 PDO::ATTR_EMULATE_PREPARES => true,
-                PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8mb4"
             ];
+
+            if ($this->driver === 'mysql') {
+                $options[PDO::MYSQL_ATTR_INIT_COMMAND] = "SET NAMES utf8mb4";
+            }
 
             $this->conn = new PDO($dsn, $this->username, $this->password, $options);
 
         } catch (PDOException $e) {
-            echo "Lỗi kết nối: " . $e->getMessage();
+            echo "Lỗi kết nối ({$this->driver}): " . $e->getMessage();
             error_log("Database Connection Error: " . $e->getMessage());
         }
 
