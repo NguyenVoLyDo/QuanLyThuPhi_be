@@ -256,7 +256,7 @@ class Payment
                   WHERE p.id = :id LIMIT 1";
 
         $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(':id', $id);
+        $stmt->bindValue(':id', $id);
         $stmt->execute();
 
         return $stmt->fetch();
@@ -274,10 +274,10 @@ class Payment
         }
 
         $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(':payment_code', $payment_code);
+        $stmt->bindValue(':payment_code', $payment_code);
 
         if ($exclude_id) {
-            $stmt->bindParam(':exclude_id', $exclude_id);
+            $stmt->bindValue(':exclude_id', $exclude_id);
         }
 
         $stmt->execute();
@@ -311,16 +311,16 @@ class Payment
             $stmt = $this->conn->prepare($query);
 
             // Bind data
-            $stmt->bindParam(':payment_code', $this->payment_code);
-            $stmt->bindParam(':student_id', $this->student_id);
-            $stmt->bindParam(':fee_type_id', $this->fee_type_id);
-            $stmt->bindParam(':amount_paid', $this->amount_paid);
-            $stmt->bindParam(':payment_date', $this->payment_date);
-            $stmt->bindParam(':payment_method', $this->payment_method);
-            $stmt->bindParam(':collected_by', $this->collected_by);
-            $stmt->bindParam(':receipt_number', $this->receipt_number);
-            $stmt->bindParam(':notes', $this->notes);
-            $stmt->bindParam(':status', $this->status);
+            $stmt->bindValue(':payment_code', $this->payment_code);
+            $stmt->bindValue(':student_id', $this->student_id);
+            $stmt->bindValue(':fee_type_id', $this->fee_type_id);
+            $stmt->bindValue(':amount_paid', $this->amount_paid);
+            $stmt->bindValue(':payment_date', $this->payment_date);
+            $stmt->bindValue(':payment_method', $this->payment_method);
+            $stmt->bindValue(':collected_by', $this->collected_by);
+            $stmt->bindValue(':receipt_number', $this->receipt_number);
+            $stmt->bindValue(':notes', $this->notes);
+            $stmt->bindValue(':status', $this->status);
 
             if ($stmt->execute()) {
                 $payment_id = $this->conn->lastInsertId();
@@ -449,13 +449,13 @@ class Payment
         $stmt = $this->conn->prepare($query);
 
         // Bind data
-        $stmt->bindParam(':amount_paid', $this->amount_paid);
-        $stmt->bindParam(':payment_date', $this->payment_date);
-        $stmt->bindParam(':payment_method', $this->payment_method);
-        $stmt->bindParam(':receipt_number', $this->receipt_number);
-        $stmt->bindParam(':notes', $this->notes);
-        $stmt->bindParam(':status', $this->status);
-        $stmt->bindParam(':id', $this->id);
+        $stmt->bindValue(':amount_paid', $this->amount_paid);
+        $stmt->bindValue(':payment_date', $this->payment_date);
+        $stmt->bindValue(':payment_method', $this->payment_method);
+        $stmt->bindValue(':receipt_number', $this->receipt_number);
+        $stmt->bindValue(':notes', $this->notes);
+        $stmt->bindValue(':status', $this->status);
+        $stmt->bindValue(':id', $this->id);
 
         if ($stmt->execute()) {
             return ['success' => true, 'message' => 'Cập nhật thành công!'];
@@ -481,7 +481,7 @@ class Payment
             // Xóa thanh toán
             $query = "DELETE FROM {$this->table} WHERE id = :id";
             $stmt = $this->conn->prepare($query);
-            $stmt->bindParam(':id', $id);
+            $stmt->bindValue(':id', $id);
 
             if (!$stmt->execute()) {
                 throw new Exception('Không thể xóa thanh toán!');
@@ -498,9 +498,9 @@ class Payment
                            WHERE student_id = :student_id AND fee_type_id = :fee_type_id";
 
             $update_stmt = $this->conn->prepare($update_debt);
-            $update_stmt->bindParam(':amount', $payment['amount_paid']);
-            $update_stmt->bindParam(':student_id', $payment['student_id']);
-            $update_stmt->bindParam(':fee_type_id', $payment['fee_type_id']);
+            $update_stmt->bindValue(':amount', $payment['amount_paid']);
+            $update_stmt->bindValue(':student_id', $payment['student_id']);
+            $update_stmt->bindValue(':fee_type_id', $payment['fee_type_id']);
             $update_stmt->execute();
 
             $this->conn->commit();
@@ -550,11 +550,11 @@ class Payment
         $stmt = $this->conn->prepare($query);
 
         if (!empty($from_date)) {
-            $stmt->bindParam(':from_date', $from_date);
+            $stmt->bindValue(':from_date', $from_date);
         }
 
         if (!empty($to_date)) {
-            $stmt->bindParam(':to_date', $to_date);
+            $stmt->bindValue(':to_date', $to_date);
         }
 
         $stmt->execute();
@@ -572,7 +572,7 @@ class Payment
                   ORDER BY month";
 
         $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(':year', $year);
+        $stmt->bindValue(':year', $year);
         $stmt->execute();
 
         $results = $stmt->fetchAll();

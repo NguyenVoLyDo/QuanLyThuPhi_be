@@ -397,7 +397,7 @@ try {
                     $adminController->systemSettings();
                     break;
                 default:
-                    header('Location: /QuanLyThuPhi/backend/index.php?action=dashboard');
+                    header('Location: index.php?action=dashboard');
                     break;
             }
             break;
@@ -405,7 +405,7 @@ try {
         default:
             http_response_code(404);
             echo '<h1>404 - Không tìm thấy trang</h1>';
-            echo '<a href="/QuanLyThuPhi/backend/index.php">Về trang chủ</a>';
+            echo '<a href="index.php">Về trang chủ</a>';
             break;
     }
 
@@ -415,7 +415,7 @@ try {
     echo '<h2>Đã xảy ra lỗi!</h2>';
     echo '<p>' . htmlspecialchars($e->getMessage()) . '</p>';
     echo '<p><small>File: ' . $e->getFile() . ' (Line: ' . $e->getLine() . ')</small></p>';
-    echo '<a href="/QuanLyThuPhi/backend/index.php">Quay lại trang chủ</a>';
+    echo '<a href="index.php">Quay lại trang chủ</a>';
     echo '</div>';
     error_log("Error: " . $e->getMessage() . " in " . $e->getFile() . " on line " . $e->getLine());
 }

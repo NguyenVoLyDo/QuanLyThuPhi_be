@@ -69,7 +69,9 @@ class StudentController
                 'data' => [
                     'students' => $students,
                     'classes' => array_values($classes), 
-                    'pagination' => $pagination
+                    'pagination' => $pagination,
+                    'search' => $search,
+                    'class_id' => $class_id
                 ]
             ]);
         }
@@ -168,7 +170,7 @@ class StudentController
         check_permission(['Admin', 'Accountant']);
 
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            header('Location: /QuanLyThuPhi/backend/index.php?controller=student&action=index');
+            header('Location: index.php?controller=student&action=index');
             exit();
         }
 
@@ -193,7 +195,7 @@ class StudentController
             }
             $_SESSION['errors'] = $errors;
             $_SESSION['old'] = $_POST;
-            header('Location: /QuanLyThuPhi/backend/index.php?controller=student&action=create');
+            header('Location: index.php?controller=student&action=create');
             exit();
         }
 
@@ -210,7 +212,7 @@ class StudentController
             set_flash('error', $result['message'], 'danger');
         }
 
-        header('Location: /QuanLyThuPhi/backend/index.php?controller=student&action=index');
+        header('Location: index.php?controller=student&action=index');
         exit();
     }
 
@@ -247,7 +249,7 @@ class StudentController
         check_permission(['Admin', 'Accountant', 'Teacher']);
 
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            header('Location: /QuanLyThuPhi/backend/index.php?controller=student&action=index');
+            header('Location: index.php?controller=student&action=index');
             exit();
         }
 
@@ -273,7 +275,7 @@ class StudentController
             }
             $_SESSION['errors'] = $errors;
             $_SESSION['old'] = $_POST;
-            header('Location: /QuanLyThuPhi/backend/index.php?controller=student&action=edit&id=' . $this->studentModel->id);
+            header('Location: index.php?controller=student&action=edit&id=' . $this->studentModel->id);
             exit();
         }
 
@@ -291,7 +293,7 @@ class StudentController
         }
 
         // Redirect back to view page for better UX
-        header('Location: /QuanLyThuPhi/backend/index.php?controller=student&action=view&id=' . $this->studentModel->id);
+        header('Location: index.php?controller=student&action=view&id=' . $this->studentModel->id);
         exit();
     }
 
@@ -315,7 +317,7 @@ class StudentController
             set_flash('error', $result['message'], 'danger');
         }
 
-        header('Location: /QuanLyThuPhi/backend/index.php?controller=student&action=index');
+        header('Location: index.php?controller=student&action=index');
         exit();
     }
 
@@ -329,10 +331,7 @@ class StudentController
         $student = $this->studentModel->getById($id);
 
         if (!$student) {
-            set_flash('error', 'Không tìm thấy học sinh!', 'danger');
-            header('Location: /QuanLyThuPhi/backend/index.php?controller=student&action=index');
-            exit();
-            header('Location: /QuanLyThuPhi/backend/index.php?controller=student&action=index');
+            header('Location: index.php?controller=student&action=index');
             exit();
         }
 
@@ -342,7 +341,7 @@ class StudentController
             $teacherClassIds = $classModel->getClassIdsByTeacher($_SESSION['user_id']);
             if (!in_array($student['class_id'], $teacherClassIds)) {
                 set_flash('error', 'Bạn không có quyền xem học sinh này!', 'danger');
-                header('Location: /QuanLyThuPhi/backend/index.php?controller=student&action=index');
+                header('Location: index.php?controller=student&action=index');
                 exit();
             }
         }
@@ -421,13 +420,13 @@ class StudentController
         check_permission(['Admin', 'Accountant']);
 
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            header('Location: /QuanLyThuPhi/backend/index.php?controller=student&action=import');
+            header('Location: index.php?controller=student&action=import');
             exit();
         }
 
         if (!isset($_FILES['file']['name']) || $_FILES['file']['name'] == '') {
             set_flash('error', 'Vui lòng chọn file!', 'danger');
-            header('Location: /QuanLyThuPhi/backend/index.php?controller=student&action=import');
+            header('Location: index.php?controller=student&action=import');
             exit();
         }
 
@@ -436,14 +435,14 @@ class StudentController
 
         if (!in_array(strtolower($extension), $allowed_extensions)) {
             set_flash('error', 'Chỉ chấp nhận file CSV!', 'danger');
-            header('Location: /QuanLyThuPhi/backend/index.php?controller=student&action=import');
+            header('Location: index.php?controller=student&action=import');
             exit();
         }
 
         $handle = fopen($_FILES['file']['tmp_name'], 'r');
         if ($handle === false) {
             set_flash('error', 'Không thể mở file!', 'danger');
-            header('Location: /QuanLyThuPhi/backend/index.php?controller=student&action=import');
+            header('Location: index.php?controller=student&action=import');
             exit();
         }
 
@@ -571,17 +570,7 @@ class StudentController
             } else {
                 set_flash('success', $msg, 'success');
             }
-            header('Location: /QuanLyThuPhi/backend/index.php?controller=student&action=index');
-        } else {
-            $error_msg = 'Không nhập được học sinh nào.';
-            if (!empty($errors)) {
-                $error_msg .= ' <br>' . implode('<br>', array_slice($errors, 0, 10));
-                if (count($errors) > 10) {
-                    $error_msg .= "<br>... và " . (count($errors) - 10) . " lỗi khác.";
-                }
-            }
-            set_flash('error', $error_msg, 'danger');
-            header('Location: /QuanLyThuPhi/backend/index.php?controller=student&action=import');
+            header('Location: index.php?controller=student&action=import');
         }
         exit();
     }
@@ -610,7 +599,7 @@ class StudentController
         }
 
         // Redirect back to view page for better UX
-        header('Location: /QuanLyThuPhi/backend/index.php?controller=student&action=view&id=' . $id);
+        header('Location: index.php?controller=student&action=view&id=' . $id);
         exit;
     }
 }

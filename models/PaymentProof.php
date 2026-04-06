@@ -32,10 +32,10 @@ class PaymentProof
 
         $stmt = $this->conn->prepare($query);
 
-        $stmt->bindParam(':student_id', $this->student_id);
-        $stmt->bindParam(':fee_type_id', $this->fee_type_id);
-        $stmt->bindParam(':amount', $this->amount);
-        $stmt->bindParam(':image_path', $this->image_path);
+        $stmt->bindValue(':student_id', $this->student_id);
+        $stmt->bindValue(':fee_type_id', $this->fee_type_id);
+        $stmt->bindValue(':amount', $this->amount);
+        $stmt->bindValue(':image_path', $this->image_path);
 
         if ($stmt->execute()) {
             return ['success' => true, 'message' => 'Gửi minh chứng thành công!'];
@@ -68,11 +68,11 @@ class PaymentProof
         $stmt = $this->conn->prepare($query);
 
         if (!empty($student_id)) {
-            $stmt->bindParam(':student_id', $student_id);
+            $stmt->bindValue(':student_id', $student_id);
         }
 
         if (!empty($status)) {
-            $stmt->bindParam(':status', $status);
+            $stmt->bindValue(':status', $status);
         }
 
         $stmt->execute();
@@ -92,7 +92,7 @@ class PaymentProof
                   LIMIT 1";
 
         $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(':id', $id);
+        $stmt->bindValue(':id', $id);
         $stmt->execute();
 
         return $stmt->fetch(PDO::FETCH_ASSOC);
@@ -109,9 +109,9 @@ class PaymentProof
 
         $stmt = $this->conn->prepare($query);
 
-        $stmt->bindParam(':status', $status);
-        $stmt->bindParam(':note', $note);
-        $stmt->bindParam(':id', $id);
+        $stmt->bindValue(':status', $status);
+        $stmt->bindValue(':note', $note);
+        $stmt->bindValue(':id', $id);
 
         if ($stmt->execute()) {
             return ['success' => true, 'message' => 'Cập nhật trạng thái thành công!'];

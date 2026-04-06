@@ -37,8 +37,8 @@ class Exemption {
             $stmt->bindValue(':search', $search_param);
         }
         
-        $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
-        $stmt->bindParam(':per_page', $per_page, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+        $stmt->bindValue(':per_page', $per_page, PDO::PARAM_INT);
         $stmt->execute();
         
         return $stmt->fetchAll();
@@ -72,7 +72,7 @@ class Exemption {
     public function getById($id) {
         $query = "SELECT * FROM {$this->table} WHERE id = :id LIMIT 1";
         $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(':id', $id);
+        $stmt->bindValue(':id', $id);
         $stmt->execute();
         return $stmt->fetch();
     }
@@ -111,11 +111,11 @@ class Exemption {
         
         $stmt = $this->conn->prepare($query);
         
-        $stmt->bindParam(':name', $this->name);
-        $stmt->bindParam(':discount_type', $this->discount_type);
-        $stmt->bindParam(':discount_value', $this->discount_value);
-        $stmt->bindParam(':description', $this->description);
-        $stmt->bindParam(':id', $this->id);
+        $stmt->bindValue(':name', $this->name);
+        $stmt->bindValue(':discount_type', $this->discount_type);
+        $stmt->bindValue(':discount_value', $this->discount_value);
+        $stmt->bindValue(':description', $this->description);
+        $stmt->bindValue(':id', $this->id);
         
         if ($stmt->execute()) {
             return ['success' => true, 'message' => 'Cập nhật thành công!'];

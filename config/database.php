@@ -153,7 +153,7 @@ function check_permission($allowed_roles = [])
         if (defined('API_MODE')) {
             json_response(['success' => false, 'message' => 'Unauthorized - Please login', 'code' => 401], 401);
         }
-        header('Location: /QuanLyThuPhi/backend/index.php?action=login');
+        header('Location: index.php?action=login');
         exit();
     }
 
@@ -163,7 +163,7 @@ function check_permission($allowed_roles = [])
         if (defined('API_MODE')) {
             json_response(['success' => false, 'message' => 'Forbidden - No Permission', 'code' => 403], 403);
         }
-        header('Location: /QuanLyThuPhi/backend/index.php?action=dashboard&error=no_permission');
+        header('Location: index.php?action=dashboard&error=no_permission');
         exit();
     }
 

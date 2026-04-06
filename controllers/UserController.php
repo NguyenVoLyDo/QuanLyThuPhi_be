@@ -34,7 +34,8 @@ class UserController
                 'success' => true,
                 'data' => [
                     'users' => $users,
-                    'pagination' => $pagination
+                    'pagination' => $pagination,
+                    'search' => $search
                 ]
             ]);
         }
@@ -79,7 +80,7 @@ class UserController
         check_permission(['Admin']);
 
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            header('Location: /QuanLyThuPhi/backend/index.php?controller=user&action=index');
+            header('Location: index.php?controller=user&action=index');
             exit();
         }
 
@@ -98,7 +99,7 @@ class UserController
         if (!empty($errors)) {
             $_SESSION['errors'] = $errors;
             $_SESSION['old'] = $_POST;
-            header('Location: /QuanLyThuPhi/backend/index.php?controller=user&action=create');
+            header('Location: index.php?controller=user&action=create');
             exit();
         }
 
@@ -127,7 +128,7 @@ class UserController
             set_flash('error', $result['message'], 'danger');
         }
 
-        header('Location: /QuanLyThuPhi/backend/index.php?controller=user&action=index');
+        header('Location: index.php?controller=user&action=index');
         exit();
     }
 
@@ -181,7 +182,7 @@ class UserController
         check_permission(['Admin']);
 
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            header('Location: /QuanLyThuPhi/backend/index.php?controller=user&action=index');
+            header('Location: index.php?controller=user&action=index');
             exit();
         }
 
@@ -201,7 +202,7 @@ class UserController
         if (!empty($errors)) {
             $_SESSION['errors'] = $errors;
             $_SESSION['old'] = $_POST;
-            header('Location: /QuanLyThuPhi/backend/index.php?controller=user&action=edit&id=' . $this->userModel->id);
+            header('Location: index.php?controller=user&action=edit&id=' . $this->userModel->id);
             exit();
         }
 
@@ -223,7 +224,7 @@ class UserController
             set_flash('error', $result['message'], 'danger');
         }
 
-        header('Location: /QuanLyThuPhi/backend/index.php?controller=user&action=index');
+        header('Location: index.php?controller=user&action=index');
         exit();
     }
 
@@ -239,7 +240,7 @@ class UserController
         // Không cho phép xóa chính mình
         if ($id == $_SESSION['user_id']) {
             set_flash('error', 'Không thể xóa tài khoản đang đăng nhập!', 'danger');
-            header('Location: /QuanLyThuPhi/backend/index.php?controller=user&action=index');
+            header('Location: index.php?controller=user&action=index');
             exit();
         }
 
@@ -251,7 +252,7 @@ class UserController
             set_flash('error', $result['message'], 'danger');
         }
 
-        header('Location: /QuanLyThuPhi/backend/index.php?controller=user&action=index');
+        header('Location: index.php?controller=user&action=index');
         exit();
     }
 

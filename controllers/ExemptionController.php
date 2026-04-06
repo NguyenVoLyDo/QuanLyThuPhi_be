@@ -30,7 +30,14 @@ class ExemptionController
         $exemptions = $this->exemptionModel->getAll($search, $page, $per_page);
 
         if (defined('API_MODE')) {
-            json_response(['success' => true, 'data' => ['exemptories' => $exemptions, 'pagination' => $pagination]]);
+            json_response([
+                'success' => true, 
+                'data' => [
+                    'exemptions' => $exemptions, 
+                    'pagination' => $pagination,
+                    'search' => $search
+                ]
+            ]);
         }
         die("Backend API - please use frontend for UI.");
     }

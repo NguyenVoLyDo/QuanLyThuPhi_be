@@ -17,7 +17,7 @@ class AuthController
     public function showLogin()
     {
         if (defined('API_MODE')) {
-            json_response(['success' => false, 'message' => 'Login required', 'code' => 401], 401);
+            json_response(['success' => true, 'message' => 'Login required for access'], 200);
         }
         // Fallback for direct backend access
         die("Backend API - please use frontend for UI.");
@@ -156,7 +156,7 @@ class AuthController
         }
 
         if (defined('API_MODE')) {
-            json_response(['success' => true, 'data' => $stats]);
+            json_response(['success' => true, 'data' => ['stats' => $stats]]);
         }
         $this->showLogin(); // Should not reach here if using API
     }

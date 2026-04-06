@@ -58,15 +58,15 @@ class FeeType
         }
 
         if (!empty($category)) {
-            $stmt->bindParam(':category', $category);
+            $stmt->bindValue(':category', $category);
         }
 
         if (!empty($year)) {
-            $stmt->bindParam(':year', $year);
+            $stmt->bindValue(':year', $year);
         }
 
-        $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
-        $stmt->bindParam(':per_page', $per_page, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+        $stmt->bindValue(':per_page', $per_page, PDO::PARAM_INT);
         $stmt->execute();
 
         return $stmt->fetchAll();
@@ -100,11 +100,11 @@ class FeeType
         }
 
         if (!empty($category)) {
-            $stmt->bindParam(':category', $category);
+            $stmt->bindValue(':category', $category);
         }
 
         if (!empty($year)) {
-            $stmt->bindParam(':year', $year);
+            $stmt->bindValue(':year', $year);
         }
 
         $stmt->execute();
@@ -119,7 +119,7 @@ class FeeType
     {
         $query = "SELECT * FROM {$this->table} WHERE id = :id LIMIT 1";
         $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(':id', $id);
+        $stmt->bindValue(':id', $id);
         $stmt->execute();
         return $stmt->fetch();
     }
@@ -149,17 +149,17 @@ class FeeType
         $stmt = $this->conn->prepare($query);
 
         // Bind data
-        $stmt->bindParam(':fee_name', $this->fee_name);
-        $stmt->bindParam(':description', $this->description);
-        $stmt->bindParam(':amount', $this->amount);
-        $stmt->bindParam(':fee_category', $this->fee_category);
-        $stmt->bindParam(':is_mandatory', $this->is_mandatory);
-        $stmt->bindParam(':academic_year', $this->academic_year);
-        $stmt->bindParam(':semester', $this->semester);
-        $stmt->bindParam(':is_active', $this->is_active);
-        $stmt->bindParam(':start_date', $this->start_date);
-        $stmt->bindParam(':end_date', $this->end_date);
-        $stmt->bindParam(':status', $this->status);
+        $stmt->bindValue(':fee_name', $this->fee_name);
+        $stmt->bindValue(':description', $this->description);
+        $stmt->bindValue(':amount', $this->amount);
+        $stmt->bindValue(':fee_category', $this->fee_category);
+        $stmt->bindValue(':is_mandatory', $this->is_mandatory);
+        $stmt->bindValue(':academic_year', $this->academic_year);
+        $stmt->bindValue(':semester', $this->semester);
+        $stmt->bindValue(':is_active', $this->is_active);
+        $stmt->bindValue(':start_date', $this->start_date);
+        $stmt->bindValue(':end_date', $this->end_date);
+        $stmt->bindValue(':status', $this->status);
 
         if ($stmt->execute()) {
             return ['success' => true, 'message' => 'Thêm khoản thu thành công!', 'id' => $this->conn->lastInsertId()];
@@ -190,18 +190,18 @@ class FeeType
         $stmt = $this->conn->prepare($query);
 
         // Bind data
-        $stmt->bindParam(':fee_name', $this->fee_name);
-        $stmt->bindParam(':description', $this->description);
-        $stmt->bindParam(':amount', $this->amount);
-        $stmt->bindParam(':fee_category', $this->fee_category);
-        $stmt->bindParam(':is_mandatory', $this->is_mandatory);
-        $stmt->bindParam(':academic_year', $this->academic_year);
-        $stmt->bindParam(':semester', $this->semester);
-        $stmt->bindParam(':is_active', $this->is_active);
-        $stmt->bindParam(':start_date', $this->start_date);
-        $stmt->bindParam(':end_date', $this->end_date);
-        $stmt->bindParam(':status', $this->status);
-        $stmt->bindParam(':id', $this->id);
+        $stmt->bindValue(':fee_name', $this->fee_name);
+        $stmt->bindValue(':description', $this->description);
+        $stmt->bindValue(':amount', $this->amount);
+        $stmt->bindValue(':fee_category', $this->fee_category);
+        $stmt->bindValue(':is_mandatory', $this->is_mandatory);
+        $stmt->bindValue(':academic_year', $this->academic_year);
+        $stmt->bindValue(':semester', $this->semester);
+        $stmt->bindValue(':is_active', $this->is_active);
+        $stmt->bindValue(':start_date', $this->start_date);
+        $stmt->bindValue(':end_date', $this->end_date);
+        $stmt->bindValue(':status', $this->status);
+        $stmt->bindValue(':id', $this->id);
 
         if ($stmt->execute()) {
             return ['success' => true, 'message' => 'Cập nhật thành công!'];
@@ -218,7 +218,7 @@ class FeeType
         // Kiểm tra xem khoản thu có thanh toán nào chưa
         $check_query = "SELECT COUNT(*) as total FROM payments WHERE fee_type_id = :id";
         $check_stmt = $this->conn->prepare($check_query);
-        $check_stmt->bindParam(':id', $id);
+        $check_stmt->bindValue(':id', $id);
         $check_stmt->execute();
         $check = $check_stmt->fetch();
 
@@ -228,7 +228,7 @@ class FeeType
 
         $query = "DELETE FROM {$this->table} WHERE id = :id";
         $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(':id', $id);
+        $stmt->bindValue(':id', $id);
 
         if ($stmt->execute()) {
             return ['success' => true, 'message' => 'Xóa thành công!'];
@@ -308,10 +308,10 @@ class FeeType
                 $final_amount = $base_amount * (1 - min($percent_discount, 100) / 100);
                 $final_amount = max(0, $final_amount - $amount_discount);
 
-                $insert_stmt->bindParam(':student_id', $student['id']);
-                $insert_stmt->bindParam(':fee_type_id', $fee_type_id);
-                $insert_stmt->bindParam(':amount', $final_amount);
-                $insert_stmt->bindParam(':due_date', $due_date);
+                $insert_stmt->bindValue(':student_id', $student['id']);
+                $insert_stmt->bindValue(':fee_type_id', $fee_type_id);
+                $insert_stmt->bindValue(':amount', $final_amount);
+                $insert_stmt->bindValue(':due_date', $due_date);
 
                 if ($insert_stmt->execute()) {
                     $count++;

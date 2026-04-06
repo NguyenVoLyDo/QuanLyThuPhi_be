@@ -116,7 +116,13 @@ class PaymentController
                     'payments' => $payments,
                     'feeTypes' => $feeTypes,
                     'classes' => array_values($classes),
-                    'pagination' => $pagination
+                    'pagination' => $pagination,
+                    'search' => $search,
+                    'student_id' => $student_id,
+                    'from_date' => $from_date,
+                    'to_date' => $to_date,
+                    'class_id' => $class_id,
+                    'fee_type_id' => $fee_type_id
                 ]
             ]);
         }
@@ -255,7 +261,7 @@ class PaymentController
         check_permission(['Accountant', 'Teacher', 'Student']);
 
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            header('Location: /QuanLyThuPhi/backend/index.php?controller=payment&action=index');
+            header('Location: index.php?controller=payment&action=index');
             exit();
         }
 
@@ -291,7 +297,7 @@ class PaymentController
         if (!empty($errors)) {
             $_SESSION['errors'] = $errors;
             $_SESSION['old'] = $_POST;
-            header('Location: /QuanLyThuPhi/backend/index.php?controller=payment&action=create');
+            header('Location: index.php?controller=payment&action=create');
             exit();
         }
 
@@ -300,11 +306,11 @@ class PaymentController
         if ($result['success']) {
             $this->auditLog->log($_SESSION['user_id'], 'CREATE_PAYMENT', 'payment', $result['id'], "Mã phiếu: {$result['payment_code']}, Số tiền: {$this->paymentModel->amount_paid}");
             set_flash('success', $result['message'], 'success');
-            header('Location: /QuanLyThuPhi/backend/index.php?controller=payment&action=receipt&id=' . $result['id']);
+            header('Location: index.php?controller=payment&action=receipt&id=' . $result['id']);
             exit();
         } else {
             set_flash('error', $result['message'], 'danger');
-            header('Location: /QuanLyThuPhi/backend/index.php?controller=payment&action=create');
+            header('Location: index.php?controller=payment&action=create');
             exit();
         }
     }
@@ -322,7 +328,7 @@ class PaymentController
 
         if (empty($fee_type_ids)) {
             set_flash('error', 'Vui lòng chọn ít nhất một khoản thu!', 'danger');
-            header('Location: /QuanLyThuPhi/backend/index.php?controller=payment&action=create&student_id=' . $student_id);
+            header('Location: index.php?controller=payment&action=create&student_id=' . $student_id);
             exit();
         }
 
@@ -350,10 +356,10 @@ class PaymentController
         if ($result['success']) {
             $this->auditLog->log($_SESSION['user_id'], 'CREATE_MULTI_PAYMENT', 'student', $student_id, "Thu " . count($payments_data) . " khoản phí");
             set_flash('success', $result['message'], 'success');
-            header('Location: /QuanLyThuPhi/backend/index.php?controller=student&action=view&id=' . $student_id);
+            header('Location: index.php?controller=student&action=view&id=' . $student_id);
         } else {
             set_flash('error', $result['message'], 'danger');
-            header('Location: /QuanLyThuPhi/backend/index.php?controller=payment&action=create&student_id=' . $student_id);
+            header('Location: index.php?controller=payment&action=create&student_id=' . $student_id);
         }
         exit();
     }
@@ -415,7 +421,7 @@ class PaymentController
             set_flash('error', $result['message'], 'danger');
         }
 
-        header('Location: /QuanLyThuPhi/backend/index.php?controller=payment&action=index');
+        header('Location: index.php?controller=payment&action=index');
         exit();
     }
 
@@ -517,8 +523,30 @@ class PaymentController
         $amount = $_GET['amount'] ?? 0;
         $fee_name = urldecode($_GET['fee_name'] ?? '');
 
+        // Load settings for bank info
+        $config_path = __DIR__ . '/../config/settings.json';
+        $settings = [];
+        if (file_exists($config_path)) {
+            $settings = json_decode(file_get_contents($config_path), true);
+        }
+
+        $bank_info = [
+            'bank_name' => $settings['bank_name'] ?? 'MB Bank',
+            'bank_id' => $settings['bank_id'] ?? 'MB',
+            'account_no' => $settings['account_no'] ?? '0000000000',
+            'account_name' => $settings['account_name'] ?? 'TRUONG HOC ABC'
+        ];
+
         if (defined('API_MODE')) {
-            json_response(['success' => true, 'data' => ['fee_type_id' => $fee_type_id, 'amount' => $amount, 'fee_name' => $fee_name]]);
+            json_response([
+                'success' => true,
+                'data' => [
+                    'fee_type_id' => $fee_type_id,
+                    'amount' => $amount,
+                    'fee_name' => $fee_name,
+                    'bank_info' => $bank_info
+                ]
+            ]);
         }
         die("Backend API - please use frontend for UI.");
     }
@@ -603,7 +631,7 @@ class PaymentController
         check_permission(['Student']);
 
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            header('Location: /QuanLyThuPhi/backend/index.php?controller=payment&action=myDebts');
+            header('Location: index.php?controller=payment&action=myDebts');
             exit();
         }
 
@@ -612,7 +640,7 @@ class PaymentController
 
         if (!$fee_type_id || !$amount) {
             set_flash('error', 'Dữ liệu không hợp lệ! Vui lòng thử lại.');
-            header('Location: /QuanLyThuPhi/backend/index.php?controller=payment&action=myDebts');
+            header('Location: index.php?controller=payment&action=myDebts');
             exit();
         }
 
@@ -629,7 +657,8 @@ class PaymentController
             $ext = pathinfo($filename, PATHINFO_EXTENSION);
             if (!in_array(strtolower($ext), $allowed)) {
                 set_flash('error', 'Chỉ chấp nhận file ảnh (JPG, PNG) hoặc PDF!');
-                header('Location: ' . $_SERVER['HTTP_REFERER']);
+                $referer = $_SERVER['HTTP_REFERER'] ?? 'index.php?controller=payment&action=myDebts';
+                header('Location: ' . $referer);
                 exit();
             }
 
@@ -652,18 +681,24 @@ class PaymentController
 
                 if ($result['success']) {
                     set_flash('success', 'Đã gửi minh chứng thành công! Kế toán sẽ duyệt sớm.');
-                    header('Location: /QuanLyThuPhi/backend/index.php?controller=payment&action=myDebts');
+                    header('Location: index.php?controller=payment&action=myDebts');
                 } else {
                     set_flash('error', $result['message']);
-                    header('Location: ' . $_SERVER['HTTP_REFERER']);
+                    $referer = $_SERVER['HTTP_REFERER'] ?? 'index.php?controller=payment&action=myDebts';
+                    header('Location: ' . $referer);
                 }
             } else {
-                set_flash('error', 'Lỗi khi upload file!');
-                header('Location: ' . $_SERVER['HTTP_REFERER']);
+                error_log("Upload Error: move_uploaded_file failed to " . $destination);
+                set_flash('error', 'Lỗi khi upload file vào thư mục đích!');
+                $referer = $_SERVER['HTTP_REFERER'] ?? 'index.php?controller=payment&action=myDebts';
+                header('Location: ' . $referer);
             }
         } else {
-            set_flash('error', 'Vui lòng chọn file minh chứng!');
-            header('Location: ' . $_SERVER['HTTP_REFERER']);
+            $err_code = $_FILES['proof_image']['error'] ?? 'No file';
+            error_log("Upload Error - Code: " . $err_code);
+            set_flash('error', 'Vui lòng chọn file minh chứng hợp lệ! (Lỗi: ' . $err_code . ')');
+            $referer = $_SERVER['HTTP_REFERER'] ?? 'index.php?controller=payment&action=myDebts';
+            header('Location: ' . $referer);
         }
         exit();
     }
@@ -701,7 +736,7 @@ class PaymentController
 
         if (!$proof || $proof['status'] != 'Pending') {
             set_flash('error', 'Minh chứng không tồn tại hoặc đã được xử lý!');
-            header('Location: /QuanLyThuPhi/backend/index.php?controller=payment&action=manageProofs');
+            header('Location: index.php?controller=payment&action=manageProofs');
             exit();
         }
 
@@ -729,7 +764,7 @@ class PaymentController
             set_flash('error', 'Lỗi khi tạo phiếu thu: ' . $result['message']);
         }
 
-        header('Location: /QuanLyThuPhi/backend/index.php?controller=payment&action=manageProofs');
+        header('Location: index.php?controller=payment&action=manageProofs');
         exit();
     }
 
@@ -741,7 +776,7 @@ class PaymentController
         check_permission(['Accountant']);
 
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            header('Location: /QuanLyThuPhi/backend/index.php?controller=payment&action=manageProofs');
+            header('Location: index.php?controller=payment&action=manageProofs');
             exit();
         }
 
@@ -755,7 +790,7 @@ class PaymentController
         $this->auditLog->log($_SESSION['user_id'], 'REJECT_PROOF', 'payment_proof', $id, "Từ chối minh chứng #$id. Lý do: $reason");
 
         set_flash('success', 'Đã từ chối minh chứng!');
-        header('Location: /QuanLyThuPhi/backend/index.php?controller=payment&action=manageProofs');
+        header('Location: index.php?controller=payment&action=manageProofs');
         exit();
     }
 }

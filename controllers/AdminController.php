@@ -116,7 +116,7 @@ class AdminController {
             file_put_contents($config_path, json_encode($settings, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
             
             set_flash('success', 'Đã lưu cài đặt hệ thống!', 'success');
-            header('Location: /QuanLyThuPhi/backend/index.php?controller=admin&action=systemSettings');
+            header('Location: index.php?controller=admin&action=systemSettings');
             exit();
         }
         

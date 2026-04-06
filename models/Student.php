@@ -109,12 +109,12 @@ class Student
                     $stmt->bindValue(":class_id_$k", $id);
                 }
             } else {
-                $stmt->bindParam(':class_id', $class_id);
+                $stmt->bindValue(':class_id', $class_id);
             }
         }
 
-        $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
-        $stmt->bindParam(':per_page', $per_page, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+        $stmt->bindValue(':per_page', $per_page, PDO::PARAM_INT);
     }
 
     /**
@@ -155,7 +155,7 @@ class Student
                     $stmt->bindValue(":class_id_$k", $id);
                 }
             } else {
-                $stmt->bindParam(':class_id', $class_id);
+                $stmt->bindValue(':class_id', $class_id);
             }
         }
 
@@ -175,7 +175,7 @@ class Student
                   WHERE s.id = :id LIMIT 1";
 
         $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(':id', $id);
+        $stmt->bindValue(':id', $id);
         $stmt->execute();
 
         return $stmt->fetch();
@@ -193,10 +193,10 @@ class Student
         }
 
         $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(':student_code', $student_code);
+        $stmt->bindValue(':student_code', $student_code);
 
         if ($exclude_id) {
-            $stmt->bindParam(':exclude_id', $exclude_id);
+            $stmt->bindValue(':exclude_id', $exclude_id);
         }
 
         $stmt->execute();
@@ -222,17 +222,17 @@ class Student
         $stmt = $this->conn->prepare($query);
 
         // Bind data
-        $stmt->bindParam(':student_code', $this->student_code);
-        $stmt->bindParam(':full_name', $this->full_name);
-        $stmt->bindParam(':date_of_birth', $this->date_of_birth);
-        $stmt->bindParam(':gender', $this->gender);
-        $stmt->bindParam(':class_id', $this->class_id);
-        $stmt->bindParam(':parent_name', $this->parent_name);
-        $stmt->bindParam(':parent_phone', $this->parent_phone);
-        $stmt->bindParam(':parent_email', $this->parent_email);
-        $stmt->bindParam(':address', $this->address);
-        $stmt->bindParam(':is_active', $this->is_active);
-        $stmt->bindParam(':notes', $this->notes);
+        $stmt->bindValue(':student_code', $this->student_code);
+        $stmt->bindValue(':full_name', $this->full_name);
+        $stmt->bindValue(':date_of_birth', $this->date_of_birth);
+        $stmt->bindValue(':gender', $this->gender);
+        $stmt->bindValue(':class_id', $this->class_id);
+        $stmt->bindValue(':parent_name', $this->parent_name);
+        $stmt->bindValue(':parent_phone', $this->parent_phone);
+        $stmt->bindValue(':parent_email', $this->parent_email);
+        $stmt->bindValue(':address', $this->address);
+        $stmt->bindValue(':is_active', $this->is_active);
+        $stmt->bindValue(':notes', $this->notes);
 
         if ($stmt->execute()) {
             return ['success' => true, 'message' => 'Thêm học sinh thành công!', 'id' => $this->conn->lastInsertId()];
@@ -267,17 +267,17 @@ class Student
         $stmt = $this->conn->prepare($query);
 
         // Bind data
-        $stmt->bindParam(':student_code', $this->student_code);
-        $stmt->bindParam(':full_name', $this->full_name);
-        $stmt->bindParam(':date_of_birth', $this->date_of_birth);
-        $stmt->bindParam(':gender', $this->gender);
-        $stmt->bindParam(':class_id', $this->class_id);
-        $stmt->bindParam(':parent_name', $this->parent_name);
-        $stmt->bindParam(':parent_phone', $this->parent_phone);
-        $stmt->bindParam(':parent_email', $this->parent_email);
-        $stmt->bindParam(':address', $this->address);
-        $stmt->bindParam(':is_active', $this->is_active);
-        $stmt->bindParam(':id', $this->id);
+        $stmt->bindValue(':student_code', $this->student_code);
+        $stmt->bindValue(':full_name', $this->full_name);
+        $stmt->bindValue(':date_of_birth', $this->date_of_birth);
+        $stmt->bindValue(':gender', $this->gender);
+        $stmt->bindValue(':class_id', $this->class_id);
+        $stmt->bindValue(':parent_name', $this->parent_name);
+        $stmt->bindValue(':parent_phone', $this->parent_phone);
+        $stmt->bindValue(':parent_email', $this->parent_email);
+        $stmt->bindValue(':address', $this->address);
+        $stmt->bindValue(':is_active', $this->is_active);
+        $stmt->bindValue(':id', $this->id);
 
         if ($stmt->execute()) {
             return ['success' => true, 'message' => 'Cập nhật thành công!'];
@@ -293,8 +293,8 @@ class Student
     {
         $query = "UPDATE {$this->table} SET notes = :notes WHERE id = :id";
         $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(':notes', $notes);
-        $stmt->bindParam(':id', $id);
+        $stmt->bindValue(':notes', $notes);
+        $stmt->bindValue(':id', $id);
 
         if ($stmt->execute()) {
             return ['success' => true, 'message' => 'Cập nhật ghi chú thành công!'];
@@ -311,7 +311,7 @@ class Student
         try {
             $check_query = "SELECT COUNT(*) as total FROM payments WHERE student_id = :id";
             $check_stmt = $this->conn->prepare($check_query);
-            $check_stmt->bindParam(':id', $id);
+            $check_stmt->bindValue(':id', $id);
             $check_stmt->execute();
             $check = $check_stmt->fetch();
 
@@ -335,7 +335,7 @@ class Student
             // Xóa học sinh
             $query = "DELETE FROM {$this->table} WHERE id = :id";
             $stmt = $this->conn->prepare($query);
-            $stmt->bindParam(':id', $id);
+            $stmt->bindValue(':id', $id);
             $stmt->execute();
 
             $this->conn->commit();
@@ -375,7 +375,7 @@ class Student
                       ORDER BY sd.due_date ASC";
 
             $stmt = $this->conn->prepare($query);
-            $stmt->bindParam(':student_id', $student_id);
+            $stmt->bindValue(':student_id', $student_id);
             $stmt->execute();
 
             return $stmt->fetchAll();
@@ -397,7 +397,7 @@ class Student
                   ORDER BY p.payment_date DESC, p.created_at DESC";
 
         $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(':student_id', $student_id);
+        $stmt->bindValue(':student_id', $student_id);
         $stmt->execute();
 
         return $stmt->fetchAll();

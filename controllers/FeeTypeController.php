@@ -38,7 +38,10 @@ class FeeTypeController
                 'data' => [
                     'fee_types' => $fee_types,
                     'categories' => $categories,
-                    'pagination' => $pagination
+                    'pagination' => $pagination,
+                    'search' => $search,
+                    'category' => $category,
+                    'year' => $year
                 ]
             ]);
         }
@@ -67,7 +70,7 @@ class FeeTypeController
         check_permission(['Accountant']);
 
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            header('Location: /QuanLyThuPhi/backend/index.php?controller=feetype&action=index');
+            header('Location: index.php?controller=feetype&action=index');
             exit();
         }
 
@@ -90,7 +93,7 @@ class FeeTypeController
         if (!empty($errors)) {
             $_SESSION['errors'] = $errors;
             $_SESSION['old'] = $_POST;
-            header('Location: /QuanLyThuPhi/backend/index.php?controller=feetype&action=create');
+            header('Location: index.php?controller=feetype&action=create');
             exit();
         }
 
@@ -114,7 +117,7 @@ class FeeTypeController
             set_flash('error', $result['message'], 'danger');
         }
 
-        header('Location: /QuanLyThuPhi/backend/index.php?controller=feetype&action=index');
+        header('Location: index.php?controller=feetype&action=index');
         exit();
     }
 
@@ -150,7 +153,7 @@ class FeeTypeController
         check_permission(['Accountant']);
 
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            header('Location: /QuanLyThuPhi/backend/index.php?controller=feetype&action=index');
+            header('Location: index.php?controller=feetype&action=index');
             exit();
         }
 
@@ -174,7 +177,7 @@ class FeeTypeController
         if (!empty($errors)) {
             $_SESSION['errors'] = $errors;
             $_SESSION['old'] = $_POST;
-            header('Location: /QuanLyThuPhi/backend/index.php?controller=feetype&action=edit&id=' . $this->feeTypeModel->id);
+            header('Location: index.php?controller=feetype&action=edit&id=' . $this->feeTypeModel->id);
             exit();
         }
 
@@ -187,7 +190,7 @@ class FeeTypeController
             set_flash('error', $result['message'], 'danger');
         }
 
-        header('Location: /QuanLyThuPhi/backend/index.php?controller=feetype&action=index');
+        header('Location: index.php?controller=feetype&action=index');
         exit();
     }
 
@@ -208,7 +211,7 @@ class FeeTypeController
             set_flash('error', $result['message'], 'danger');
         }
 
-        header('Location: /QuanLyThuPhi/backend/index.php?controller=feetype&action=index');
+        header('Location: index.php?controller=feetype&action=index');
         exit();
     }
 
@@ -268,7 +271,7 @@ class FeeTypeController
         check_permission(['Accountant']);
 
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            header('Location: /QuanLyThuPhi/backend/index.php?controller=feetype&action=import');
+            header('Location: index.php?controller=feetype&action=import');
             exit();
         }
 
@@ -278,14 +281,14 @@ class FeeTypeController
 
             if (!in_array(strtolower($extension), $allowed_extensions)) {
                 set_flash('error', 'Chỉ chấp nhận file CSV!');
-                header('Location: /QuanLyThuPhi/backend/index.php?controller=feetype&action=import');
+                header('Location: index.php?controller=feetype&action=import');
                 exit();
             }
 
             $handle = fopen($_FILES['file']['tmp_name'], 'r');
             if ($handle === false) {
                 set_flash('error', 'Không thể mở file!');
-                header('Location: /QuanLyThuPhi/backend/index.php?controller=feetype&action=import');
+                header('Location: index.php?controller=feetype&action=import');
                 exit();
             }
 
@@ -365,14 +368,14 @@ class FeeTypeController
                 } else {
                     set_flash('success', $msg);
                 }
-                header('Location: /QuanLyThuPhi/backend/index.php?controller=feetype&action=index');
+                header('Location: index.php?controller=feetype&action=index');
             } else {
                 set_flash('error', 'Không nhập được khoản thu nào.<br>' . implode('<br>', $errors));
-                header('Location: /QuanLyThuPhi/backend/index.php?controller=feetype&action=import');
+                header('Location: index.php?controller=feetype&action=import');
             }
         } else {
             set_flash('error', 'Vui lòng chọn file!');
-            header('Location: /QuanLyThuPhi/backend/index.php?controller=feetype&action=import');
+            header('Location: index.php?controller=feetype&action=import');
         }
         exit();
     }

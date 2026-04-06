@@ -73,8 +73,8 @@ class User {
             $stmt->bindValue(':search3', $search_param);
         }
         
-        $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
-        $stmt->bindParam(':per_page', $per_page, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+        $stmt->bindValue(':per_page', $per_page, PDO::PARAM_INT);
         $stmt->execute();
         
         return $stmt->fetchAll();

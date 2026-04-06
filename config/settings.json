@@ -3,5 +3,9 @@
     "semester": "HK1",
     "school_name": "Trường THPT ABC",
     "school_address": "",
-    "updated_at": "2026-01-16 15:30:40"
+    "bank_name": "MB Bank",
+    "bank_id": "MB",
+    "account_no": "0000000000",
+    "account_name": "TRUONG HOC ABC",
+    "updated_at": "2026-04-06 13:25:00"
 }
