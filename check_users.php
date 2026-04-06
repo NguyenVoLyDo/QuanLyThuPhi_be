@@ -1,5 +1,5 @@
 <?php
-require_once 'c:/xampp/htdocs/QuanLyThuPhi_be/config/database.php';
+require_once __DIR__ . '/config/database.php';
 $db = new Database();
 $conn = $db->connect();
 $stmt = $conn->query("SELECT u.id, u.username, u.student_id FROM users u 
